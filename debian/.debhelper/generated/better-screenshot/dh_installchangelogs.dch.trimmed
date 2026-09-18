@@ -1,0 +1,10 @@
+better-screenshot (1.0.0) unstable; urgency=medium
+
+  * Initial release, forked from GNOME Screenshot 41.0.
+  * Capture a single monitor, chosen from a drop-down and remembered
+    between runs by connector name.
+  * Save straight to the pictures directory with no preview dialog.
+  * New --monitor option taking a monitor number or a connector name.
+  * New desktop portal backend, used under Wayland.
+
+ -- k-nowicki <now.nowicki@gmail.com>  Fri, 18 Sep 2026 17:21:33 +0200

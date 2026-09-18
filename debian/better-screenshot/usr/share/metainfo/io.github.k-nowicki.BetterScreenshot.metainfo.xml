@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2014 Richard Hughes <richard@hughsie.com> -->
+<component type="desktop-application">
+  <id>io.github.k-nowicki.BetterScreenshot.desktop</id>
+  <launchable type="desktop-id">io.github.k-nowicki.BetterScreenshot.desktop</launchable>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-2.0+</project_license>
+  <name>Better Screenshot</name>
+  <summary>Save images of a single monitor, your whole screen, or individual windows</summary>
+  <description>
+    <p>
+      Better Screenshot is a fork of GNOME Screenshot that adds what multi-monitor
+      setups need: capturing one specific monitor rather than every screen stitched
+      together. Pick the monitor from a drop-down, and the choice is remembered for
+      next time, so a routine screenshot costs a single click.
+    </p>
+    <p>
+      Screenshots can also cover the whole desktop, a single window, or a selected
+      rectangular area. Captures are saved straight to your pictures folder without
+      a confirmation dialog, and the countdown releases the keyboard and pointer, so
+      open menus stay open and end up in the picture.
+    </p>
+    <p>
+      It works the same on Wayland and X11, and can be driven from a key binding
+      with --monitor, which accepts either a monitor number or a connector name
+      such as DP-5.
+    </p>
+  </description>
+  <url type="homepage">https://github.com/k-nowicki/better-screenshot</url>
+  <url type="bugtracker">https://github.com/k-nowicki/better-screenshot/issues</url>
+  <screenshots>
+    <screenshot type="default">
+      <caption>Choosing which monitor to capture</caption>
+      <image>https://raw.githubusercontent.com/k-nowicki/better-screenshot/main/data/screenshots/better-screenshot-monitor.png</image>
+    </screenshot>
+  </screenshots>
+  <kudos>
+    <kudo>HiDpiIcon</kudo>
+    <kudo>ModernToolkit</kudo>
+  </kudos>
+  <releases>
+    <release version="1.0.0" date="2026-09-18">
+      <description>
+        <p>First release of the Better Screenshot fork, based on GNOME Screenshot 41.0.</p>
+        <ul>
+          <li>Capture a single monitor, chosen from a drop-down</li>
+          <li>The chosen monitor is remembered between launches</li>
+          <li>Save straight to the pictures folder, with no preview dialog</li>
+          <li>New --monitor option taking a monitor number or connector name</li>
+          <li>Fix a cropped capture being wrongly blanked by monitor masking</li>
+          <li>Fix the capture button starting two captures at once</li>
+        </ul>
+      </description>
+    </release>
+    <release version="41.0" type="stable" date="2021-11-13" urgency="medium">
+      <description>
+        <p>Drop support for non-unique mode in headless instance</p>
+        <p>metainfo: Align app name with .desktop name</p>
+        <p>Translation updates</p>
+      </description>
+    </release>
+    <release version="40.0" type="stable" date="2021-03-20" urgency="medium">
+      <description>
+        <p>Move sound effects to gnome-shell</p>
+        <p>Focus the filename entry by default</p>
+        <p>Remember delay for area screenshots</p>
+        <p>Remove compulsory_for_desktop</p>
+        <p>metainfo: add a launchable tag</p>
+        <p>Translation updates</p>
+      </description>
+    </release>
+    <release version="3.38.0" type="stable" date="2020-09-10" urgency="medium">
+      <description>
+        <p>Changes:</p>
+        <ul>
+          <li>Completely redesign the UI</li>
+          <li>Port to libhandy</li>
+          <li>Allow taking area screenshots with timeout</li>
+          <li>Deprecate --include-border and --remove-border options</li>
+          <li>Deprecate --border-effect option</li>
+          <li>Translation updates</li>
+        </ul>
+      </description>
+    </release>
+    <release version="3.36.0" type="stable" date="2020-03-10" urgency="medium">
+      <description>
+        <p>Translation updates.</p>
+        <p xml:lang="ckb">نوێکارییەکانی وەرگێڕان.</p>
+      </description>
+    </release>
+  </releases>
+  <update_contact>ebassi@gnome.org</update_contact>
+  <project_group>GNOME</project_group>
+  <translation type="gettext">better-screenshot</translation>
+  <content_rating type="oars-1.0"/>
+</component>

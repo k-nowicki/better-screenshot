@@ -33,7 +33,7 @@ jobs:
           ls -la dist
 
       - name: Lint the package
-        run: lintian --no-tag-display-limit dist/*.deb || true
+        run: lintian --tag-display-limit 0 dist/*.deb || true
 
       - uses: actions/upload-artifact@v4
         with:
