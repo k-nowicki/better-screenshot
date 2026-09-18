@@ -501,9 +501,13 @@ G_GNUC_END_IGNORE_DEPRECATIONS
     }
 #endif /* HAVE_X11_EXTENSIONS_SHAPE_H */
 
-  /* if we have a selected area, there were by definition no cursor in the
-   * screenshot */
-  if (screenshot_config->include_pointer && !rectangle)
+  /* Upstream skipped the cursor for every cropped capture, reasoning that an
+   * area the user dragged out with the pointer cannot contain that pointer.
+   * That does not hold for a monitor capture, which is cropped but not drawn
+   * with the mouse, so only a genuine area selection is excluded here.
+   */
+  if (screenshot_config->include_pointer &&
+      (rectangle == NULL || !screenshot_config->take_area_shot))
     {
       g_autoptr(GdkCursor) cursor = NULL;
       g_autoptr(GdkPixbuf) cursor_pixbuf = NULL;
@@ -515,7 +519,7 @@ G_GNUC_END_IGNORE_DEPRECATIONS
         {
           GdkSeat *seat;
           GdkDevice *device;
-          GdkRectangle rect;
+          GdkRectangle rect, bounds;
           gint cx, cy, xhot, yhot;
 
           seat = gdk_display_get_default_seat (gdk_display_get_default ());
@@ -537,13 +541,23 @@ G_GNUC_END_IGNORE_DEPRECATIONS
           rect.width = gdk_pixbuf_get_width (cursor_pixbuf);
           rect.height = gdk_pixbuf_get_height (cursor_pixbuf);
 
-          /* see if the pointer is inside the window */
-          if (gdk_rectangle_intersect (&real_coords, &rect, &rect))
+          /* see if the pointer is inside the captured region */
+          bounds = (rectangle != NULL) ? *rectangle : real_coords;
+
+          if (gdk_rectangle_intersect (&bounds, &rect, &rect))
             {
               gint cursor_x, cursor_y;
 
               cursor_x = cx - xhot - frame_offset.left;
               cursor_y = cy - yhot - frame_offset.top;
+
+              /* the pixbuf starts at the crop origin, not at the root origin */
+              if (rectangle != NULL)
+                {
+                  cursor_x -= rectangle->x;
+                  cursor_y -= rectangle->y;
+                }
+
               gdk_pixbuf_composite (cursor_pixbuf, screenshot,
                                     cursor_x, cursor_y,
                                     rect.width, rect.height,
