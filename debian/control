@@ -1,0 +1,38 @@
+Source: better-screenshot
+Section: graphics
+Priority: optional
+Maintainer: k-nowicki <now.nowicki@gmail.com>
+Build-Depends: debhelper-compat (= 13),
+               meson (>= 0.59),
+               ninja-build,
+               pkg-config,
+               libgtk-3-dev,
+               libhandy-1-dev,
+               libglib2.0-dev,
+               libx11-dev,
+               libxext-dev,
+               gettext,
+               desktop-file-utils
+Standards-Version: 4.6.2
+Homepage: https://github.com/k-nowicki/better-screenshot
+Rules-Requires-Root: no
+
+Package: better-screenshot
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Recommends: xdg-desktop-portal-gnome
+Description: screenshot tool that can capture a single monitor
+ Better Screenshot is a fork of GNOME Screenshot for multi-monitor desktops.
+ It adds a monitor drop-down to the capture dialog, so a screenshot can cover
+ one physical screen instead of every monitor stitched together, and it
+ remembers the choice between runs.
+ .
+ Captures are written straight to the pictures directory without a
+ confirmation dialog, and the countdown holds no keyboard or pointer grab, so
+ menus opened while it runs stay open and appear in the picture. A --monitor
+ option takes a monitor number or a connector name such as DP-5, which makes
+ it usable from a key binding.
+ .
+ It installs alongside gnome-screenshot rather than replacing it. Under X11 it
+ reads the X server directly; under Wayland it uses the desktop portal, which
+ cannot capture single windows or include the pointer.
