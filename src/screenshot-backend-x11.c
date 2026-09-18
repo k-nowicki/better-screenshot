@@ -391,8 +391,14 @@ screenshot_backend_x11_get_pixbuf (ScreenshotBackend *backend,
                                            screenshot_coords.x, screenshot_coords.y,
                                            screenshot_coords.width, screenshot_coords.height);
 
-  if (!screenshot_config->take_window_shot &&
-      !screenshot_config->take_area_shot)
+  /* mask_monitors() interprets the pixbuf as starting at the root window
+   * origin, so it may only run on a full-root capture. Applied to a cropped
+   * one it blanks whatever part of the crop falls outside a monitor rectangle
+   * in *root* coordinates, which has nothing to do with the cropped region.
+   * Keying off the rectangle rather than take_area_shot keeps single-monitor
+   * captures - which are area captures with the area flag unset - correct.
+   */
+  if (rectangle == NULL && !screenshot_config->take_window_shot)
     mask_monitors (screenshot, root);
 
 #ifdef HAVE_X11_EXTENSIONS_SHAPE_H
