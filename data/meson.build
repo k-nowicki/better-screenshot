@@ -2,8 +2,8 @@ gnome = import('gnome')
 
 desktop_file = i18n.merge_file(
   type: 'desktop',
-  input: 'org.gnome.Screenshot.desktop.in',
-  output: 'org.gnome.Screenshot.desktop',
+  input: 'io.github.k-nowicki.BetterScreenshot.desktop.in',
+  output: 'io.github.k-nowicki.BetterScreenshot.desktop',
   po_dir: join_paths(meson.current_source_dir(), '../po'),
   install: true,
   install_dir: gnome_screenshot_appsdir
@@ -22,8 +22,8 @@ if desktop_file_validate.found()
 endif
 
 metainfo_file = i18n.merge_file(
-  input: 'org.gnome.Screenshot.metainfo.xml.in',
-  output: 'org.gnome.Screenshot.metainfo.xml',
+  input: 'io.github.k-nowicki.BetterScreenshot.metainfo.xml.in',
+  output: 'io.github.k-nowicki.BetterScreenshot.metainfo.xml',
   po_dir: join_paths(meson.current_source_dir(), '../po'),
   install: true,
   install_dir: gnome_screenshot_appdatadir
@@ -47,15 +47,15 @@ endif
 service_conf = configuration_data()
 service_conf.set('bindir', gnome_screenshot_bindir)
 configure_file(
-  input: 'org.gnome.Screenshot.service.in',
-  output: 'org.gnome.Screenshot.service',
+  input: 'io.github.k-nowicki.BetterScreenshot.service.in',
+  output: 'io.github.k-nowicki.BetterScreenshot.service',
   configuration: service_conf,
   install: true,
   install_dir: gnome_screenshot_servicesdir
 )
 
 install_data(
-  'org.gnome.gnome-screenshot.gschema.xml',
+  'io.github.k-nowicki.BetterScreenshot.gschema.xml',
   install_dir: gnome_screenshot_schemadir
 )
 
@@ -75,13 +75,13 @@ endif
 
 resources = gnome.compile_resources(
   'screenshot-resources',
-  'org.gnome.Screenshot.gresource.xml',
+  'io.github.k-nowicki.BetterScreenshot.gresource.xml',
   source_dir: '.',
   c_name: 'screenshot'
 )
 
 install_data(
-  'gnome-screenshot.1',
+  'better-screenshot.1',
   install_dir: join_paths(get_option('mandir'), 'man1')
 )
 

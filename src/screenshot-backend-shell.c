@@ -48,7 +48,7 @@ screenshot_backend_shell_get_pixbuf (ScreenshotBackend *backend,
   GVariant *method_params;
   GDBusConnection *connection;
 
-  path = g_build_filename (g_get_user_cache_dir (), "gnome-screenshot", NULL);
+  path = g_build_filename (g_get_user_cache_dir (), "better-screenshot", NULL);
   g_mkdir_with_parents (path, 0700);
 
   tmpname = g_strdup_printf ("scr-%d.png", g_random_int ());

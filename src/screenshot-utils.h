@@ -23,10 +23,12 @@
 
 G_BEGIN_DECLS
 
-#define SCREENSHOT_ICON_NAME "org.gnome.Screenshot"
+#define SCREENSHOT_ICON_NAME "io.github.k-nowicki.BetterScreenshot"
 
 typedef void (*ScreenshotResponseFunc) (gint     response,
                                         gpointer user_data);
+
+gboolean   screenshot_platform_is_x11 (void);
 
 GdkPixbuf *screenshot_get_pixbuf          (GdkRectangle *rectangle);
 

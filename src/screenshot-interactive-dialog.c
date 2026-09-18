@@ -28,6 +28,7 @@
 #include "screenshot-config.h"
 #include "screenshot-interactive-dialog.h"
 #include "screenshot-monitors.h"
+#include "screenshot-utils.h"
 
 typedef enum {
   SCREENSHOT_MODE_SCREEN,
@@ -65,7 +66,8 @@ set_mode (ScreenshotInteractiveDialog *self,
   gboolean take_window_shot = (mode == SCREENSHOT_MODE_WINDOW);
   gboolean take_area_shot = (mode == SCREENSHOT_MODE_SELECTION);
 
-  gtk_widget_set_sensitive (self->pointer_row, !take_area_shot);
+  gtk_widget_set_sensitive (self->pointer_row,
+                            !take_area_shot && screenshot_platform_is_x11 ());
 
   /* Picking a monitor only means something when capturing a screen: a window
    * shot follows the window, and a selection carries its own rectangle.
@@ -188,7 +190,7 @@ screenshot_interactive_dialog_class_init (ScreenshotInteractiveDialogClass *klas
                   0);
 
   gtk_widget_class_set_template_from_resource (widget_class,
-                                               "/org/gnome/Screenshot/ui/screenshot-interactive-dialog.ui");
+                                               "/io/github/k-nowicki/BetterScreenshot/ui/screenshot-interactive-dialog.ui");
   gtk_widget_class_bind_template_child (widget_class, ScreenshotInteractiveDialog, listbox);
   gtk_widget_class_bind_template_child (widget_class, ScreenshotInteractiveDialog, monitor);
   gtk_widget_class_bind_template_child (widget_class, ScreenshotInteractiveDialog, monitor_row);
@@ -219,9 +221,25 @@ screenshot_interactive_dialog_init (ScreenshotInteractiveDialog *self)
 
   populate_monitors (self);
 
+  /* Under Wayland the capture goes through the desktop portal, which returns
+   * one image of the whole desktop and offers no window or cursor options.
+   * Leaving the controls live would let the user ask for something that
+   * silently will not happen.
+   */
+  if (!screenshot_platform_is_x11 ())
+    {
+      gtk_widget_set_sensitive (self->window, FALSE);
+      gtk_widget_set_tooltip_text (self->window,
+                                   _("Capturing a single window is only available on X11."));
+      gtk_widget_set_tooltip_text (self->pointer_row,
+                                   _("Showing the pointer is only available on X11."));
+    }
+
   gtk_widget_set_sensitive (self->monitor_row, !screenshot_config->take_window_shot &&
                                                !screenshot_config->take_area_shot);
-  gtk_widget_set_sensitive (self->pointer_row, !screenshot_config->take_area_shot);
+  gtk_widget_set_sensitive (self->pointer_row,
+                            !screenshot_config->take_area_shot &&
+                            screenshot_platform_is_x11 ());
   gtk_switch_set_active (GTK_SWITCH (self->pointer), screenshot_config->include_pointer);
 
   gtk_adjustment_set_value (self->delay_adjustment, (gdouble) screenshot_config->delay);

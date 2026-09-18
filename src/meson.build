@@ -1,11 +1,12 @@
 sources = [
-  'gnome-screenshot.c',
+  'better-screenshot.c',
 
   'cheese-flash.c',
 
   'screenshot-application.c',
   'screenshot-area-selection.c',
   'screenshot-backend.c',
+  'screenshot-backend-portal.c',
   'screenshot-backend-shell.c',
   'screenshot-backend-x11.c',
   'screenshot-config.c',
@@ -35,7 +36,7 @@ c_args = [
 ]
 
 executable(
-  'gnome-screenshot',
+  'better-screenshot',
   sources + resources,
   include_directories: include_directories,
   dependencies: dependencies,

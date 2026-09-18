@@ -239,3 +239,31 @@ screenshot_monitors_get_geometry (gint          index,
 
   return TRUE;
 }
+
+/* The union of every monitor, in logical coordinates: the area a full-desktop
+ * capture covers.
+ */
+gboolean
+screenshot_monitors_get_desktop_bounds (GdkRectangle *bounds)
+{
+  gint i, n;
+
+  n = screenshot_monitors_get_n ();
+  if (n <= 0)
+    return FALSE;
+
+  for (i = 0; i < n; i++)
+    {
+      GdkRectangle geometry;
+
+      if (!screenshot_monitors_get_geometry (i, &geometry))
+        continue;
+
+      if (i == 0)
+        *bounds = geometry;
+      else
+        gdk_rectangle_union (bounds, &geometry, bounds);
+    }
+
+  return TRUE;
+}

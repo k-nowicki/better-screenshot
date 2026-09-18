@@ -1,4 +1,4 @@
-/* gnome-screenshot.c - Take a screenshot of the desktop
+/* better-screenshot.c - Take a screenshot of the desktop
  *
  * Copyright (C) 2001 Jonathan Blandford <jrb@alum.mit.edu>
  * Copyright (C) 2006 Emmanuele Bassi <ebassi@gnome.org>
@@ -267,7 +267,7 @@ save_with_description_and_profile (ScreenshotApplication *self,
                                    format, NULL,
                                    save_pixbuf_ready_cb, self,
                                    "icc-profile", self->icc_profile_base64,
-                                   "tEXt::Software", "gnome-screenshot",
+                                   "tEXt::Software", "better-screenshot",
                                    NULL);
 }
 static void
@@ -279,7 +279,7 @@ save_with_description (ScreenshotApplication *self,
                                    G_OUTPUT_STREAM (os),
                                    format, NULL,
                                    save_pixbuf_ready_cb, self,
-                                   "tEXt::Software", "gnome-screenshot",
+                                   "tEXt::Software", "better-screenshot",
                                    NULL);
 }
 
@@ -735,6 +735,11 @@ action_about (GSimpleAction *action,
               gpointer user_data)
 {
   const gchar *authors[] = {
+    "k-nowicki",
+    "",
+    /* Translators: this heading separates the fork's author, above, from the
+     * authors of GNOME Screenshot, which this program is a fork of. */
+    _("GNOME Screenshot authors:"),
     "Emmanuele Bassi",
     "Jonathan Blandford",
     "Cosimo Cecchi",
@@ -753,10 +758,11 @@ action_about (GSimpleAction *action,
                          "version", VERSION,
                          "authors", authors,
                          "artists", artists,
-                         "program-name", _("Screenshot"),
+                         "program-name", "Better Screenshot",
                          "comments", _("Save images of your screen or individual windows"),
                          "logo-icon-name", SCREENSHOT_ICON_NAME,
                          "translator-credits", _("translator-credits"),
+                         "website", "https://github.com/k-nowicki/better-screenshot",
                          "license-type", GTK_LICENSE_GPL_2_0,
                          "wrap-license", TRUE,
                          NULL);
@@ -827,8 +833,9 @@ screenshot_application_startup (GApplication *app)
 
   screenshot_load_config ();
 
-  g_set_application_name (_("Screenshot"));
-  g_set_prgname ("org.gnome.Screenshot");
+  /* A product name, so deliberately not translated. */
+  g_set_application_name ("Better Screenshot");
+  g_set_prgname ("io.github.k-nowicki.BetterScreenshot");
   gtk_window_set_default_icon_name (SCREENSHOT_ICON_NAME);
 
   g_action_map_add_action_entries (G_ACTION_MAP (self), action_entries,
@@ -891,7 +898,7 @@ ScreenshotApplication *
 screenshot_application_new (void)
 {
   return g_object_new (SCREENSHOT_TYPE_APPLICATION,
-                       "application-id", "org.gnome.Screenshot",
+                       "application-id", "io.github.k-nowicki.BetterScreenshot",
                        "flags", G_APPLICATION_HANDLES_COMMAND_LINE,
                        NULL);
 }

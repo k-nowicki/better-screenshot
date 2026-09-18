@@ -226,7 +226,7 @@ screenshot_dialog_class_init (ScreenshotDialogClass *klass)
                   0);
 
   gtk_widget_class_set_template_from_resource (widget_class,
-                                               "/org/gnome/Screenshot/ui/screenshot-dialog.ui");
+                                               "/io/github/k-nowicki/BetterScreenshot/ui/screenshot-dialog.ui");
   gtk_widget_class_bind_template_child (widget_class, ScreenshotDialog, filename_entry);
   gtk_widget_class_bind_template_child (widget_class, ScreenshotDialog, save_widget);
   gtk_widget_class_bind_template_child (widget_class, ScreenshotDialog, preview_darea);

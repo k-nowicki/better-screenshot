@@ -1,37 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Copyright 2014 Richard Hughes <richard@hughsie.com> -->
 <component type="desktop-application">
-  <id>org.gnome.Screenshot.desktop</id>
-  <launchable type="desktop-id">org.gnome.Screenshot.desktop</launchable>
+  <id>io.github.k-nowicki.BetterScreenshot.desktop</id>
+  <launchable type="desktop-id">io.github.k-nowicki.BetterScreenshot.desktop</launchable>
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>GPL-2.0+</project_license>
-  <name>Screenshot</name>
-  <summary>Save images of your screen or individual windows</summary>
+  <name>Better Screenshot</name>
+  <summary>Save images of a single monitor, your whole screen, or individual windows</summary>
   <description>
     <p>
-      Screenshot is a simple utility that lets you take pictures of your computer screen.
-      Screenshots can be of your whole screen, any specific application, or a selected
-      rectangular area.
-      You can also copy the captured screenshot directly into the GNOME clipboard and
-      paste it into other applications.
+      Better Screenshot is a fork of GNOME Screenshot that adds what multi-monitor
+      setups need: capturing one specific monitor rather than every screen stitched
+      together. Pick the monitor from a drop-down, and the choice is remembered for
+      next time, so a routine screenshot costs a single click.
     </p>
     <p>
-      Screenshot allows you to take screenshots even when it’s not open: just
-      press the PrtSc button on your keyboard, and a snapshot of your whole screen will
-      be saved to your Pictures folder.
-      Hold Alt while pressing PrtSc and you will get a screenshot of only the currently
-      selected window.
+      Screenshots can also cover the whole desktop, a single window, or a selected
+      rectangular area. Captures are saved straight to your pictures folder without
+      a confirmation dialog, and the countdown releases the keyboard and pointer, so
+      open menus stay open and end up in the picture.
+    </p>
+    <p>
+      It works the same on Wayland and X11, and can be driven from a key binding
+      with --monitor, which accepts either a monitor number or a connector name
+      such as DP-5.
     </p>
   </description>
-  <url type="homepage">https://gitlab.gnome.org/GNOME/gnome-screenshot</url>
-  <url type="bugtracker">https://gitlab.gnome.org/GNOME/gnome-screenshot/issues</url>
-  <url type="donation">http://www.gnome.org/friends/</url>
+  <url type="homepage">https://github.com/k-nowicki/better-screenshot</url>
+  <url type="bugtracker">https://github.com/k-nowicki/better-screenshot/issues</url>
   <screenshots>
     <screenshot type="default">
-      <image>https://gitlab.gnome.org/GNOME/gnome-screenshot/-/raw/master/data/screenshots/gnome-screenshot-3.38-1.png</image>
-    </screenshot>
-    <screenshot type="default">
-      <image>https://gitlab.gnome.org/GNOME/gnome-screenshot/-/raw/master/data/screenshots/gnome-screenshot-3.38-2.png</image>
+      <caption>Choosing which monitor to capture</caption>
+      <image>https://raw.githubusercontent.com/k-nowicki/better-screenshot/main/data/screenshots/better-screenshot-monitor.png</image>
     </screenshot>
   </screenshots>
   <kudos>
@@ -39,6 +39,19 @@
     <kudo>ModernToolkit</kudo>
   </kudos>
   <releases>
+    <release version="1.0.0" date="2026-09-18">
+      <description>
+        <p>First release of the Better Screenshot fork, based on GNOME Screenshot 41.0.</p>
+        <ul>
+          <li>Capture a single monitor, chosen from a drop-down</li>
+          <li>The chosen monitor is remembered between launches</li>
+          <li>Save straight to the pictures folder, with no preview dialog</li>
+          <li>New --monitor option taking a monitor number or connector name</li>
+          <li>Fix a cropped capture being wrongly blanked by monitor masking</li>
+          <li>Fix the capture button starting two captures at once</li>
+        </ul>
+      </description>
+    </release>
     <release version="41.0" type="stable" date="2021-11-13" urgency="medium">
       <description>
         <p>Drop support for non-unique mode in headless instance</p>
@@ -77,6 +90,6 @@
   </releases>
   <update_contact>ebassi@gnome.org</update_contact>
   <project_group>GNOME</project_group>
-  <translation type="gettext">gnome-screenshot</translation>
+  <translation type="gettext">better-screenshot</translation>
   <content_rating type="oars-1.0" />
 </component>

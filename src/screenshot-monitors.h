@@ -42,5 +42,6 @@ gint         screenshot_monitors_parse_spec        (const gchar  *spec);
 gchar       *screenshot_monitors_get_summary       (void);
 gboolean     screenshot_monitors_get_geometry      (gint          index,
                                                     GdkRectangle *geometry);
+gboolean     screenshot_monitors_get_desktop_bounds (GdkRectangle *bounds);
 
 G_END_DECLS

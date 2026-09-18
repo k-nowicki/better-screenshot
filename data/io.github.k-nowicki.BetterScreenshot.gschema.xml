@@ -1,11 +1,11 @@
-<schemalist gettext-domain="gnome-screenshot">
- <enum id="org.gnome.gnome-screenshot.file-types">
+<schemalist gettext-domain="better-screenshot">
+ <enum id="io.github.k-nowicki.BetterScreenshot.file-types">
     <value nick="bmp" value="0"/>
     <value nick="jpg" value="1"/>
     <value nick="png" value="2"/>
     <value nick="tiff" value="3"/>
   </enum>
-  <schema id="org.gnome.gnome-screenshot" path="/org/gnome/gnome-screenshot/" gettext-domain="gnome-screenshot">
+  <schema id="io.github.k-nowicki.BetterScreenshot" path="/io/github/k-nowicki/BetterScreenshot/" gettext-domain="better-screenshot">
     <key name="take-window-shot" type="b">
       <default>false</default>
       <summary>Window-specific screenshot (deprecated)</summary>
@@ -36,7 +36,7 @@
       <summary>Include ICC Profile</summary>
       <description>Include the ICC profile of the target in the screenshot file</description>
     </key>
-    <key name="default-file-type" enum="org.gnome.gnome-screenshot.file-types">
+    <key name="default-file-type" enum="io.github.k-nowicki.BetterScreenshot.file-types">
       <default>'png'</default>
       <summary>Default file type extension</summary>
       <description>The default file type extension for screenshots.</description>

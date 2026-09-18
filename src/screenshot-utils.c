@@ -26,48 +26,99 @@
 #include <glib.h>
 #include <glib/gi18n.h>
 
+#include "screenshot-backend-portal.h"
 #include "screenshot-backend-shell.h"
 
 #ifdef HAVE_X11
 #include "screenshot-backend-x11.h"
+#include <gdk/gdkx.h>
 #endif
+
+gboolean
+screenshot_platform_is_x11 (void)
+{
+#ifdef HAVE_X11
+  return GDK_IS_X11_DISPLAY (gdk_display_get_default ());
+#else
+  return FALSE;
+#endif
+}
+
+static ScreenshotBackend *
+make_backend (const gchar *name)
+{
+  if (g_strcmp0 (name, "portal") == 0)
+    return screenshot_backend_portal_new ();
+
+  if (g_strcmp0 (name, "shell") == 0)
+    return screenshot_backend_shell_new ();
+
+#ifdef HAVE_X11
+  if (g_strcmp0 (name, "x11") == 0)
+    return screenshot_backend_x11_new ();
+#endif
+
+  return NULL;
+}
 
 GdkPixbuf *
 screenshot_get_pixbuf (GdkRectangle *rectangle)
 {
-  GdkPixbuf *screenshot = NULL;
-  gboolean force_fallback = FALSE;
-  g_autoptr (ScreenshotBackend) backend = NULL;
+  const gchar *order[4] = { NULL, NULL, NULL, NULL };
+  const gchar *forced;
+  gint i;
 
-#ifdef HAVE_X11
-  force_fallback = g_getenv ("GNOME_SCREENSHOT_FORCE_FALLBACK") != NULL;
-#endif
+  forced = g_getenv ("BETTER_SCREENSHOT_BACKEND");
 
-  if (!force_fallback)
+  /* Kept so that the option documented by GNOME Screenshot still does what it
+   * used to: bypass the compositor and read the X server directly.
+   */
+  if (forced == NULL && g_getenv ("GNOME_SCREENSHOT_FORCE_FALLBACK") != NULL)
+    forced = "x11";
+
+  if (forced != NULL)
     {
-      backend = screenshot_backend_shell_new ();
-      screenshot = screenshot_backend_get_pixbuf (backend, rectangle);
-      if (!screenshot)
-#ifdef HAVE_X11
-        g_message ("Unable to use GNOME Shell's builtin screenshot interface, "
-                   "resorting to fallback X11.");
-#else
-        g_message ("Unable to use GNOME Shell's builtin screenshot interface.");
-#endif
-  }
-  else
-    g_message ("Using fallback X11 as requested");
-
-#ifdef HAVE_X11
-  if (!screenshot)
-    {
-      g_clear_object (&backend);
-      backend = screenshot_backend_x11_new ();
-      screenshot = screenshot_backend_get_pixbuf (backend, rectangle);
+      order[0] = forced;
     }
-#endif
+  else if (screenshot_platform_is_x11 ())
+    {
+      /* Preferred wherever it works: no permission prompt, and the only
+       * backend that can draw the pointer into a single-monitor capture.
+       */
+      order[0] = "x11";
+      order[1] = "portal";
+      order[2] = "shell";
+    }
+  else
+    {
+      /* Under Wayland the portal is the only route open to us. The
+       * compositor's own org.gnome.Shell.Screenshot interface accepts a fixed
+       * list of callers that this application is deliberately not part of, but
+       * it is still tried last in case of a build that is on that list.
+       */
+      order[0] = "portal";
+      order[1] = "shell";
+    }
 
-  return screenshot;
+  for (i = 0; i < 4 && order[i] != NULL; i++)
+    {
+      g_autoptr (ScreenshotBackend) backend = make_backend (order[i]);
+      GdkPixbuf *screenshot;
+
+      if (backend == NULL)
+        continue;
+
+      screenshot = screenshot_backend_get_pixbuf (backend, rectangle);
+      if (screenshot != NULL)
+        return screenshot;
+
+      if (order[i + 1] != NULL)
+        g_message ("The %s backend did not work, trying %s.", order[i], order[i + 1]);
+      else
+        g_message ("The %s backend did not work.", order[i]);
+    }
+
+  return NULL;
 }
 
 typedef struct

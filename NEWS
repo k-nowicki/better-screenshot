@@ -1,3 +1,22 @@
+Better Screenshot 1.0.0
+=======================
+
+First release of Better Screenshot, a fork of GNOME Screenshot 41.0.
+
+- Capture one specific monitor, chosen from a drop-down in the dialog
+- The chosen monitor is remembered between runs, by connector name, and
+  falls back to the primary monitor when that output is gone
+- Screenshots are saved straight to the pictures directory, with no
+  preview or Save As dialog
+- New --monitor option, taking a monitor index or a connector name
+- New desktop portal backend, used under Wayland
+- Include the pointer in single-monitor captures on X11
+- Fix a cropped capture being blanked by whole-desktop monitor masking
+- Fix the capture button starting two captures at once
+
+Everything below this line is the release history of GNOME Screenshot,
+the project this was forked from.
+
 ==========================================
 GNOME Screenshot 41.0 - 13th November 2021
 ==========================================

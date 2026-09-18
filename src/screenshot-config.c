@@ -1,4 +1,4 @@
-/* screenshot-config.h - Holds current configuration for gnome-screenshot
+/* screenshot-config.h - Holds current configuration for better-screenshot
  *
  * Copyright (C) 2001 Jonathan Blandford <jrb@alum.mit.edu>
  * Copyright (C) 2006 Emmanuele Bassi <ebassi@gnome.org>
@@ -43,7 +43,7 @@
  * define makes GLib abort the process. A key file keeps installation to a
  * single binary and cannot desynchronise.
  */
-#define MONITOR_CONFIG_DIR      "gnome-screenshot"
+#define MONITOR_CONFIG_DIR      "better-screenshot"
 #define MONITOR_CONFIG_FILE     "monitor.ini"
 #define MONITOR_CONFIG_GROUP    "Monitor"
 #define MONITOR_CONFIG_KEY      "connector"
@@ -125,7 +125,7 @@ screenshot_load_config (void)
 
   config = g_slice_new0 (ScreenshotConfig);
 
-  config->settings = g_settings_new ("org.gnome.gnome-screenshot");
+  config->settings = g_settings_new ("io.github.k-nowicki.BetterScreenshot");
   config->save_dir =
     g_settings_get_string (config->settings,
                            LAST_SAVE_DIRECTORY_KEY);
@@ -206,13 +206,13 @@ screenshot_config_parse_command_line (gboolean clipboard_arg,
 
   if (include_border_arg)
     g_warning ("Option --include-border is deprecated and will be removed in "
-               "gnome-screenshot 3.38.0. Window border is always included.");
+               "better-screenshot 3.38.0. Window border is always included.");
   if (disable_border_arg)
     g_warning ("Option --remove-border is deprecated and will be removed in "
-               "gnome-screenshot 3.38.0. Window border is always included.");
+               "better-screenshot 3.38.0. Window border is always included.");
   if (border_effect_arg != NULL)
     g_warning ("Option --border-effect is deprecated and will be removed in "
-               "gnome-screenshot 3.38.0. No effect will be used.");
+               "better-screenshot 3.38.0. No effect will be used.");
 
   if (screenshot_config->interactive)
     {
@@ -248,7 +248,7 @@ screenshot_config_parse_command_line (gboolean clipboard_arg,
         screenshot_config->file = g_file_new_for_commandline_arg (file_arg);
 
       /* Outside interactive mode the remembered monitor is deliberately not
-       * applied: a bare "gnome-screenshot" must keep capturing everything, or
+       * applied: a bare "better-screenshot" must keep capturing everything, or
        * existing scripts and key bindings would silently change behaviour.
        * --monitor is the explicit opt-in.
        */

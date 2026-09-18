@@ -1,4 +1,4 @@
-/* screenshot-config.h - Holds current configuration for gnome-screenshot
+/* screenshot-config.h - Holds current configuration for better-screenshot
  *
  * Copyright (C) 2008, 2011 Cosimo Cecchi <cosimoc@gnome.org>
  *

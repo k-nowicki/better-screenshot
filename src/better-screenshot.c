@@ -1,4 +1,4 @@
-/* gnome-screenshot.c - Take a screenshot of the desktop
+/* better-screenshot.c - Take a screenshot of the desktop
  *
  * Copyright (C) 2001 Jonathan Blandford <jrb@alum.mit.edu>
  * Copyright (C) 2006 Emmanuele Bassi <ebassi@gnome.org>
