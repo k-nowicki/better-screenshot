@@ -81,6 +81,14 @@ ninja -C _build
 sudo ninja -C _build install
 ```
 
+To run it from the build tree without installing, point GLib at the schema
+compiled there. The settings schema is not optional: GLib aborts at startup if
+it cannot find one, so an uninstalled run needs this.
+
+```sh
+GSETTINGS_SCHEMA_DIR=_build/data ./_build/src/better-screenshot --interactive
+```
+
 ## Relationship to GNOME Screenshot
 
 Forked from GNOME Screenshot 41.0 (upstream commit `c04ddd5`), which upstream

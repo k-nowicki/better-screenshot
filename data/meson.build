@@ -59,6 +59,14 @@ install_data(
   install_dir: gnome_screenshot_schemadir
 )
 
+# Compile the schema into the build tree as well, so the binary can be run
+# straight from there with GSETTINGS_SCHEMA_DIR pointing here. Without this,
+# an uninstalled build aborts on startup: GLib treats a missing schema as a
+# programmer error rather than a recoverable one.
+gnome.compile_schemas(
+  depend_files: files('io.github.k-nowicki.BetterScreenshot.gschema.xml')
+)
+
 glib_compile_schemas = find_program('glib-compile-schemas', required: false)
 # Validata GSchema
 if glib_compile_schemas.found()
