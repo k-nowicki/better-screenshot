@@ -41,6 +41,16 @@ typedef struct {
 
   guint delay;
 
+  /* SCREENSHOT_MONITOR_ALL for the whole desktop, 0..N-1 for a single monitor.
+   * Resolved from monitor_connector at load time, once GDK is available.
+   */
+  gint monitor_index;
+
+  /* Connector name of the remembered monitor, e.g. "DP-5", or "*" for the
+   * whole desktop. NULL when nothing has been remembered yet.
+   */
+  gchar *monitor_connector;
+
   gboolean interactive;
 } ScreenshotConfig;
 
@@ -56,6 +66,7 @@ gboolean    screenshot_config_parse_command_line  (gboolean clipboard_arg,
                                                    gboolean include_pointer_arg,
                                                    const gchar *border_effect_arg,
                                                    guint delay_arg,
+                                                   const gchar *monitor_arg,
                                                    gboolean interactive_arg,
                                                    const gchar *file_arg);
 

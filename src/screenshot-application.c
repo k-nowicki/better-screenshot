@@ -38,6 +38,7 @@
 #include "screenshot-config.h"
 #include "screenshot-filename-builder.h"
 #include "screenshot-interactive-dialog.h"
+#include "screenshot-monitors.h"
 #include "screenshot-utils.h"
 #include "screenshot-dialog.h"
 
@@ -117,7 +118,10 @@ save_pixbuf_handle_success (ScreenshotApplication *self)
 {
   set_recent_entry (self);
 
-  if (screenshot_config->interactive)
+  /* Interactive mode saves without a preview dialog, so the presence of one -
+   * not the interactive flag - decides how the save is wound up.
+   */
+  if (self->dialog != NULL)
     {
       screenshot_close_interactive_dialog (self);
     }
@@ -153,7 +157,7 @@ static void
 save_pixbuf_handle_error (ScreenshotApplication *self,
                           GError *error)
 {
-  if (screenshot_config->interactive)
+  if (self->dialog != NULL)
     {
       ScreenshotDialog *dialog = self->dialog;
 
@@ -371,13 +375,6 @@ screenshot_save_to_file (ScreenshotApplication *self)
 }
 
 static void
-screenshot_back (ScreenshotApplication *self)
-{
-  screenshot_close_interactive_dialog (self);
-  screenshot_show_interactive_dialog (self);
-}
-
-static void
 screenshot_save_to_clipboard (ScreenshotApplication *self)
 {
   GtkClipboard *clipboard;
@@ -385,30 +382,6 @@ screenshot_save_to_clipboard (ScreenshotApplication *self)
   clipboard = gtk_clipboard_get_for_display (gdk_display_get_default (),
                                              GDK_SELECTION_CLIPBOARD);
   gtk_clipboard_set_image (clipboard, self->screenshot);
-}
-
-static void
-save_clicked_cb (ScreenshotDialog      *dialog,
-                 ScreenshotApplication *self)
-{
-  /* update to the new URI */
-  g_free (self->save_uri);
-  self->save_uri = screenshot_dialog_get_uri (self->dialog);
-  screenshot_save_to_file (self);
-}
-
-static void
-copy_clicked_cb (ScreenshotDialog      *dialog,
-                 ScreenshotApplication *self)
-{
-  screenshot_save_to_clipboard (self);
-}
-
-static void
-back_clicked_cb (ScreenshotDialog      *dialog,
-                 ScreenshotApplication *self)
-{
-  screenshot_back (self);
 }
 
 static void
@@ -453,20 +426,12 @@ build_filename_ready_cb (GObject *source,
       return;
     }
 
-  if (screenshot_config->interactive)
-    {
-      self->dialog = screenshot_dialog_new (GTK_APPLICATION (self),
-                                            self->screenshot,
-                                            self->save_uri);
-      g_signal_connect_object (self->dialog, "save", G_CALLBACK (save_clicked_cb), self, 0);
-      g_signal_connect_object (self->dialog, "copy", G_CALLBACK (copy_clicked_cb), self, 0);
-      g_signal_connect_object (self->dialog, "back", G_CALLBACK (back_clicked_cb), self, 0);
-    }
-  else
-    {
-      g_application_hold (G_APPLICATION (self));
-      screenshot_save_to_file (self);
-    }
+  /* Both modes now write the file immediately. The preview window with its
+   * Save/Copy/Back buttons is deliberately skipped: the screenshot lands in
+   * the pictures directory and the application exits.
+   */
+  g_application_hold (G_APPLICATION (self));
+  screenshot_save_to_file (self);
 }
 
 static void
@@ -586,6 +551,33 @@ rectangle_found_cb (GdkRectangle *rectangle,
     }
 }
 
+/* Capturing one monitor is an area capture whose rectangle happens to be the
+ * monitor geometry. Both backends already honour a rectangle - the Shell one
+ * by calling ScreenshotArea() over D-Bus, the X11 one by cropping the root
+ * window - so nothing below this point needs to know about monitors.
+ */
+static void
+apply_monitor_rectangle (ScreenshotApplication *self)
+{
+  GdkRectangle geometry;
+
+  if (screenshot_config->take_window_shot)
+    return;
+
+  if (screenshot_config->monitor_index == SCREENSHOT_MONITOR_ALL)
+    return;
+
+  if (!screenshot_monitors_get_geometry (screenshot_config->monitor_index, &geometry))
+    {
+      g_warning ("Monitor %d is no longer connected; capturing the whole desktop instead.",
+                 screenshot_config->monitor_index);
+      return;
+    }
+
+  g_clear_pointer (&self->rectangle, g_free);
+  self->rectangle = g_memdup (&geometry, sizeof geometry);
+}
+
 static void
 screenshot_start (ScreenshotApplication *self)
 {
@@ -597,6 +589,7 @@ screenshot_start (ScreenshotApplication *self)
     }
   else
     {
+      apply_monitor_rectangle (self);
       start_screenshot_timeout (self);
     }
 
@@ -613,6 +606,7 @@ static const GOptionEntry entries[] = {
   { "remove-border", 'B', 0, G_OPTION_ARG_NONE, NULL, N_("Remove the window border from the screenshot. This option is deprecated and window border is always included"), NULL },
   { "include-pointer", 'p', 0, G_OPTION_ARG_NONE, NULL, N_("Include the pointer with the screenshot"), NULL },
   { "delay", 'd', 0, G_OPTION_ARG_INT, NULL, N_("Take screenshot after specified delay [in seconds]"), N_("seconds") },
+  { "monitor", 'm', 0, G_OPTION_ARG_STRING, NULL, N_("Grab a single monitor, given either its index (starting at 0) or its connector name, such as “DP-5”"), N_("monitor") },
   { "border-effect", 'e', 0, G_OPTION_ARG_STRING, NULL, N_("Effect to add to the border (‘shadow’, ‘border’, ‘vintage’ or ‘none’). Note: This option is deprecated and is assumed to be ‘none’"), N_("effect") },
   { "interactive", 'i', 0, G_OPTION_ARG_NONE, NULL, N_("Interactively set options"), NULL },
   { "file", 'f', 0, G_OPTION_ARG_FILENAME, NULL, N_("Save screenshot directly to this file"), N_("filename") },
@@ -647,6 +641,11 @@ screenshot_application_command_line (GApplication            *app,
   gboolean interactive_arg = FALSE;
   gchar *border_effect_arg = NULL;
   guint delay_arg = 0;
+  /* A string, not an int: GApplication omits options whose value equals the
+   * type default from the options dict, so --monitor 0 would be
+   * indistinguishable from --monitor being absent entirely.
+   */
+  gchar *monitor_arg = NULL;
   gchar *file_arg = NULL;
   GVariantDict *options;
   gint exit_status = EXIT_SUCCESS;
@@ -662,6 +661,7 @@ screenshot_application_command_line (GApplication            *app,
   g_variant_dict_lookup (options, "interactive", "b", &interactive_arg);
   g_variant_dict_lookup (options, "border-effect", "&s", &border_effect_arg);
   g_variant_dict_lookup (options, "delay", "i", &delay_arg);
+  g_variant_dict_lookup (options, "monitor", "&s", &monitor_arg);
   g_variant_dict_lookup (options, "file", "^&ay", &file_arg);
 
   res = screenshot_config_parse_command_line (clipboard_arg,
@@ -672,6 +672,7 @@ screenshot_application_command_line (GApplication            *app,
                                               include_pointer_arg,
                                               border_effect_arg,
                                               delay_arg,
+                                              monitor_arg,
                                               interactive_arg,
                                               file_arg);
   if (!res)
@@ -776,6 +777,7 @@ action_screen_shot (GSimpleAction *action,
                                         FALSE, /* include pointer */
                                         NULL,  /* border effect */
                                         0,     /* delay */
+                                        NULL,  /* monitor */
                                         FALSE, /* interactive */
                                         NULL); /* file */
   screenshot_start (self);
@@ -796,6 +798,7 @@ action_window_shot (GSimpleAction *action,
                                         FALSE, /* include pointer */
                                         NULL,  /* border effect */
                                         0,     /* delay */
+                                        NULL,  /* monitor */
                                         FALSE, /* interactive */
                                         NULL); /* file */
   screenshot_start (self);

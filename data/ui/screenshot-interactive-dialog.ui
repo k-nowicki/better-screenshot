@@ -19,7 +19,6 @@
                 <property name="label" translatable="yes">_Take Screenshot</property>
                 <property name="visible">True</property>
                 <property name="receives_default">True</property>
-                <property name="action_name">app.screen-shot</property>
                 <property name="use_underline">True</property>
                 <property name="can-default">True</property>
                 <signal name="clicked" handler="capture_button_clicked_cb"/>
@@ -78,6 +77,7 @@
                       <object class="GtkRadioButton" id="screen">
                         <property name="visible">True</property>
                         <property name="receives_default">True</property>
+                        <property name="active">True</property>
                         <property name="draw_indicator">False</property>
                         <property name="group">selection</property>
                         <signal name="toggled" handler="screen_toggled_cb"/>
@@ -110,7 +110,6 @@
                       <object class="GtkRadioButton" id="window">
                         <property name="visible">True</property>
                         <property name="receives_default">True</property>
-                        <property name="active">True</property>
                         <property name="draw_indicator">False</property>
                         <property name="group">screen</property>
                         <signal name="toggled" handler="window_toggled_cb"/>
@@ -182,6 +181,21 @@
                 <style>
                   <class name="content"/>
                 </style>
+                <child>
+                  <object class="HdyActionRow" id="monitor_row">
+                    <property name="visible">True</property>
+                    <property name="title" translatable="yes">_Monitor</property>
+                    <property name="use_underline">True</property>
+                    <property name="activatable-widget">monitor</property>
+                    <child>
+                      <object class="GtkComboBoxText" id="monitor">
+                        <property name="visible">True</property>
+                        <property name="valign">center</property>
+                        <signal name="changed" handler="monitor_changed_cb"/>
+                      </object>
+                    </child>
+                  </object>
+                </child>
                 <child>
                   <object class="HdyActionRow" id="pointer_row">
                     <property name="visible">True</property>
