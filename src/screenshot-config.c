@@ -32,6 +32,7 @@
 
 #define DELAY_KEY               "delay"
 #define INCLUDE_POINTER_KEY     "include-pointer"
+#define COPY_TO_CLIPBOARD_KEY   "copy-to-clipboard"
 #define INCLUDE_ICC_PROFILE     "include-icc-profile"
 #define AUTO_SAVE_DIRECTORY_KEY "auto-save-directory"
 #define LAST_SAVE_DIRECTORY_KEY "last-save-directory"
@@ -49,6 +50,21 @@
 #define MONITOR_CONFIG_KEY      "connector"
 
 ScreenshotConfig *screenshot_config;
+
+/* Keys added by the fork are looked up first: GLib aborts on a key the
+ * installed schema lacks, which is what an older installed copy of the schema
+ * would do to a newer binary run from the build tree.
+ */
+static gboolean
+settings_has_key (GSettings   *settings,
+                  const gchar *key)
+{
+  g_autoptr(GSettingsSchema) schema = NULL;
+
+  g_object_get (settings, "settings-schema", &schema, NULL);
+
+  return g_settings_schema_has_key (schema, key);
+}
 
 static gchar *
 monitor_config_path (void)
@@ -141,6 +157,9 @@ screenshot_load_config (void)
   config->include_icc_profile =
     g_settings_get_boolean (config->settings,
                             INCLUDE_ICC_PROFILE);
+  if (settings_has_key (config->settings, COPY_TO_CLIPBOARD_KEY))
+    config->copy_to_clipboard =
+      g_settings_get_boolean (config->settings, COPY_TO_CLIPBOARD_KEY);
 
   config->take_window_shot = FALSE;
   config->take_area_shot = FALSE;
@@ -171,6 +190,10 @@ screenshot_save_config (void)
                           INCLUDE_POINTER_KEY, c->include_pointer);
 
   g_settings_set_int (c->settings, DELAY_KEY, c->delay);
+
+  if (settings_has_key (c->settings, COPY_TO_CLIPBOARD_KEY))
+    g_settings_set_boolean (c->settings,
+                            COPY_TO_CLIPBOARD_KEY, c->copy_to_clipboard);
 
   screenshot_store_monitor_config ();
 }
@@ -216,8 +239,11 @@ screenshot_config_parse_command_line (gboolean clipboard_arg,
 
   if (screenshot_config->interactive)
     {
+      /* Only switches the option on: without --clipboard the dialog shows
+       * whatever was chosen last time.
+       */
       if (clipboard_arg)
-        g_warning ("Option --clipboard is ignored in interactive mode.");
+        screenshot_config->copy_to_clipboard = TRUE;
       if (include_pointer_arg)
         g_warning ("Option --include-pointer is ignored in interactive mode.");
       if (file_arg)

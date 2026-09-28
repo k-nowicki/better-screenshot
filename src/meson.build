@@ -9,6 +9,7 @@ sources = [
   'screenshot-backend-portal.c',
   'screenshot-backend-shell.c',
   'screenshot-backend-x11.c',
+  'screenshot-clipboard.c',
   'screenshot-config.c',
   'screenshot-dialog.c',
   'screenshot-filename-builder.c',

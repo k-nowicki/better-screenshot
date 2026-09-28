@@ -35,6 +35,7 @@
 
 #include "screenshot-application.h"
 #include "screenshot-area-selection.h"
+#include "screenshot-clipboard.h"
 #include "screenshot-config.h"
 #include "screenshot-filename-builder.h"
 #include "screenshot-interactive-dialog.h"
@@ -377,11 +378,10 @@ screenshot_save_to_file (ScreenshotApplication *self)
 static void
 screenshot_save_to_clipboard (ScreenshotApplication *self)
 {
-  GtkClipboard *clipboard;
-
-  clipboard = gtk_clipboard_get_for_display (gdk_display_get_default (),
-                                             GDK_SELECTION_CLIPBOARD);
-  gtk_clipboard_set_image (clipboard, self->screenshot);
+  /* Not gtk_clipboard_set_image(): the image would be gone as soon as the
+   * application exits, see screenshot-clipboard.c.
+   */
+  screenshot_clipboard_hand_over (self->screenshot);
 }
 
 static void
@@ -472,10 +472,15 @@ finish_take_screenshot (ScreenshotApplication *self)
   if (screenshot_config->copy_to_clipboard)
     {
       screenshot_save_to_clipboard (self);
-      if (screenshot_config->file == NULL)
+
+      /* From the dialog the clipboard is an extra, and the file is still
+       * saved. On the command line --clipboard alone keeps meaning "clipboard
+       * instead of a file", as it always has.
+       */
+      if (screenshot_config->file == NULL && !screenshot_config->interactive)
         {
           g_application_release (G_APPLICATION (self));
-          
+
           return;
         }
     }

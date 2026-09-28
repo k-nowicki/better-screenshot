@@ -1,3 +1,11 @@
+better-screenshot (1.1.0) unstable; urgency=medium
+
+  * New "Copy to Clipboard" switch in the dialog; the file is still saved.
+  * Copied images stay on the clipboard after the program exits, through a
+    small helper process that quits once something else is copied.
+
+ -- k-nowicki <now.nowicki@gmail.com>  Mon, 28 Sep 2026 02:17:54 +0200
+
 better-screenshot (1.0.0) unstable; urgency=medium
 
   * Initial release, forked from GNOME Screenshot 41.0.

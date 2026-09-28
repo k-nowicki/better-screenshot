@@ -214,6 +214,22 @@
                 <child>
                   <object class="HdyActionRow">
                     <property name="visible">True</property>
+                    <property name="title" translatable="yes">Copy to _Clipboard</property>
+                    <property name="subtitle" translatable="yes">The file is saved as well</property>
+                    <property name="use_underline">True</property>
+                    <property name="activatable-widget">clipboard</property>
+                    <child>
+                      <object class="GtkSwitch" id="clipboard">
+                        <property name="visible">True</property>
+                        <property name="valign">center</property>
+                        <signal name="state-set" handler="copy_to_clipboard_toggled_cb"/>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="HdyActionRow">
+                    <property name="visible">True</property>
                     <property name="title" translatable="yes">_Delay in Seconds</property>
                     <property name="use_underline">True</property>
                     <child>

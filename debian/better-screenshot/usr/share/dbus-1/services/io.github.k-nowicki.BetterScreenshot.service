@@ -1,3 +1,0 @@
-[D-BUS Service]
-Name=io.github.k-nowicki.BetterScreenshot
-Exec=/usr/bin/better-screenshot --gapplication-service

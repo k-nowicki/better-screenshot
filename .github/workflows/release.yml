@@ -1,6 +1,6 @@
 name: Release
 
-# Tag a commit as v1.0.0 to build the package and publish it.
+# Tag a commit as vX.Y.Z (e.g. v1.1.0) to build the package and publish it.
 on:
   push:
     tags: [ 'v*' ]

@@ -45,6 +45,7 @@ struct _ScreenshotInteractiveDialog
   GtkWidget *monitor_row;
   GtkWidget *pointer;
   GtkWidget *pointer_row;
+  GtkWidget *clipboard;
   GtkAdjustment *delay_adjustment;
   GtkWidget *window;
   GtkWidget *selection;
@@ -169,6 +170,14 @@ include_pointer_toggled_cb (GtkSwitch                   *toggle,
 }
 
 static void
+copy_to_clipboard_toggled_cb (GtkSwitch                   *toggle,
+                              ScreenshotInteractiveDialog *self)
+{
+  screenshot_config->copy_to_clipboard = gtk_switch_get_active (toggle);
+  gtk_switch_set_state (toggle, gtk_switch_get_active (toggle));
+}
+
+static void
 capture_button_clicked_cb (GtkButton                   *button,
                            ScreenshotInteractiveDialog *self)
 {
@@ -196,6 +205,7 @@ screenshot_interactive_dialog_class_init (ScreenshotInteractiveDialogClass *klas
   gtk_widget_class_bind_template_child (widget_class, ScreenshotInteractiveDialog, monitor_row);
   gtk_widget_class_bind_template_child (widget_class, ScreenshotInteractiveDialog, pointer);
   gtk_widget_class_bind_template_child (widget_class, ScreenshotInteractiveDialog, pointer_row);
+  gtk_widget_class_bind_template_child (widget_class, ScreenshotInteractiveDialog, clipboard);
   gtk_widget_class_bind_template_child (widget_class, ScreenshotInteractiveDialog, delay_adjustment);
   gtk_widget_class_bind_template_child (widget_class, ScreenshotInteractiveDialog, window);
   gtk_widget_class_bind_template_child (widget_class, ScreenshotInteractiveDialog, selection);
@@ -205,6 +215,7 @@ screenshot_interactive_dialog_class_init (ScreenshotInteractiveDialogClass *klas
   gtk_widget_class_bind_template_callback (widget_class, monitor_changed_cb);
   gtk_widget_class_bind_template_callback (widget_class, delay_spin_value_changed_cb);
   gtk_widget_class_bind_template_callback (widget_class, include_pointer_toggled_cb);
+  gtk_widget_class_bind_template_callback (widget_class, copy_to_clipboard_toggled_cb);
   gtk_widget_class_bind_template_callback (widget_class, capture_button_clicked_cb);
 }
 
@@ -241,6 +252,7 @@ screenshot_interactive_dialog_init (ScreenshotInteractiveDialog *self)
                             !screenshot_config->take_area_shot &&
                             screenshot_platform_is_x11 ());
   gtk_switch_set_active (GTK_SWITCH (self->pointer), screenshot_config->include_pointer);
+  gtk_switch_set_active (GTK_SWITCH (self->clipboard), screenshot_config->copy_to_clipboard);
 
   gtk_adjustment_set_value (self->delay_adjustment, (gdouble) screenshot_config->delay);
 }

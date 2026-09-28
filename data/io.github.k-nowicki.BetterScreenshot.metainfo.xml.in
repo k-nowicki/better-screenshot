@@ -39,6 +39,14 @@
     <kudo>ModernToolkit</kudo>
   </kudos>
   <releases>
+    <release version="1.1.0" date="2026-09-28">
+      <description>
+        <ul>
+          <li>Optionally copy every capture to the clipboard, as well as saving it</li>
+          <li>Copied images stay available after the program exits</li>
+        </ul>
+      </description>
+    </release>
     <release version="1.0.0" date="2026-09-18">
       <description>
         <p>First release of the Better Screenshot fork, based on GNOME Screenshot 41.0.</p>

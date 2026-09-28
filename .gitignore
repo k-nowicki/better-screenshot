@@ -1,0 +1,11 @@
+/_build/
+
+# Produced by dpkg-buildpackage; only the hand-written files in debian/ belong
+# in the repository.
+/debian/.debhelper/
+/debian/better-screenshot/
+/debian/better-screenshot.substvars
+/debian/debhelper-build-stamp
+/debian/files
+/debian/*.debhelper.log
+/debian/*.debhelper

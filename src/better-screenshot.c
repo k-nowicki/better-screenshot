@@ -31,17 +31,21 @@
 #include <glib/gi18n.h>
 
 #include "screenshot-application.h"
+#include "screenshot-clipboard.h"
 
 /* main */
 int
 main (int argc, char *argv[])
 {
-  g_autoptr(ScreenshotApplication) app;
+  g_autoptr(ScreenshotApplication) app = NULL;
 
   setlocale (LC_ALL, "");
   bindtextdomain (GETTEXT_PACKAGE, LOCALEDIR);
   bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
   textdomain (GETTEXT_PACKAGE);
+
+  if (argc == 2 && g_str_equal (argv[1], SCREENSHOT_CLIPBOARD_HELPER_ARG))
+    return screenshot_clipboard_serve ();
 
   app = screenshot_application_new ();
   return g_application_run (G_APPLICATION (app), argc, argv);

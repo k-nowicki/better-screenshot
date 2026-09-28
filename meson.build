@@ -1,7 +1,7 @@
 project(
   'better-screenshot',
   'c',
-  version: '1.0.0',
+  version: '1.1.0',
   license: 'GPLv2+',
   meson_version: '>= 0.59.0',
   default_options: [

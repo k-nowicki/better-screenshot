@@ -1,3 +1,11 @@
+Better Screenshot 1.1.0
+=======================
+
+- New "Copy to Clipboard" switch in the dialog: captures also go to the
+  clipboard, and are still saved as a file. The choice is remembered.
+- --clipboard now keeps the image available after the program exits; it used
+  to vanish with it. --interactive --clipboard turns the switch on.
+
 Better Screenshot 1.0.0
 =======================
 

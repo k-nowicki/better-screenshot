@@ -21,6 +21,9 @@ straight to your pictures folder. A routine screenshot costs one click.
   exits.
 - **Menus survive the countdown.** The delay holds no keyboard or pointer grab,
   so you can open a menu and have it appear in the picture.
+- **Copy to clipboard, too.** An optional switch puts every capture on the
+  clipboard as well, ready to paste, while the file is still saved. The image
+  stays available after the program exits.
 - **Scriptable.** `--monitor` takes a number or a connector name, which makes it
   usable from a key binding.
 
@@ -32,7 +35,7 @@ and settings — so the original stays where it is.
 Download the `.deb` from [Releases](https://github.com/k-nowicki/better-screenshot/releases):
 
 ```sh
-sudo apt install ./better-screenshot_1.0.0_amd64.deb
+sudo apt install ./better-screenshot_1.1.0_amd64.deb
 ```
 
 ## Usage
@@ -42,6 +45,7 @@ better-screenshot --interactive      # the dialog
 better-screenshot --monitor DP-5     # one monitor, by connector name
 better-screenshot --monitor 1        # the same monitor, by number
 better-screenshot                    # the whole desktop
+better-screenshot -c --monitor DP-5  # to the clipboard only, no file
 ```
 
 `better-screenshot --help` lists the rest. With no `--monitor`, a
@@ -49,6 +53,11 @@ non-interactive run captures the whole desktop, exactly like `gnome-screenshot`,
 so existing key bindings keep their behaviour.
 
 The remembered monitor lives in `~/.config/better-screenshot/monitor.ini`.
+
+GNOME does not keep copied images once the program that copied them exits, so
+the clipboard is handed to a small background process
+(`better-screenshot --serve-clipboard`). It exits by itself as soon as you copy
+something else.
 
 ## X11 and Wayland
 
@@ -65,6 +74,7 @@ that are not the compositor's own tools.
 | Single monitor | yes | yes |
 | Single window | yes | no |
 | Include the pointer | yes | no |
+| Copy to clipboard | yes | yes, through Xwayland (untested) |
 | Permission prompt | no | on first use |
 
 Controls that cannot work are disabled in the dialog rather than left live and
